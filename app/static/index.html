@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="FaceForge AI, an inference-only GAN face generation demonstration.">
+    <title>FaceForge AI · Inference Lab</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to generation controls</a>
+    <header class="topbar">
+      <a class="brand" href="#generate" aria-label="FaceForge AI, go to generator">
+        <span class="brand-mark" aria-hidden="true">F</span>
+        <span>FaceForge <b>AI</b></span>
+        <span class="mode-tag">Inference lab</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <button class="nav-link" data-nav="overview" type="button">Overview</button>
+        <button class="nav-link is-active" data-nav="generate" aria-current="page" type="button">Generate</button>
+        <button class="nav-link" data-nav="training" type="button">Training record</button>
+        <button class="nav-link" data-nav="evaluation" type="button">Evaluation</button>
+        <button class="nav-link" data-nav="about" type="button">About model</button>
+      </nav>
+      <div class="header-status" id="headerStatus" aria-live="polite">
+        <span class="status-dot" aria-hidden="true"></span><span>Checking model</span>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="view reading-view overview-view" data-view="overview" aria-labelledby="overviewTitle">
+        <p class="eyebrow">FaceForge AI · inference-only GAN</p>
+        <h1 id="overviewTitle">Turn a seed into a face that never existed.</h1>
+        <p class="lede">Compare our locally trained FFHQ DCGAN with an official pretrained R3GAN. The app only runs inference, and every face shown here is explicitly synthetic.</p>
+        <div class="overview-actions">
+          <button class="generate-button" data-go="generate" type="button"><span aria-hidden="true">✦</span> Open generator</button>
+          <button class="secondary-button" data-go="training" type="button">View training record</button>
+        </div>
+        <div class="flow-diagram" aria-label="Random seed flows through the trained generator to create synthetic faces">
+          <div><span>01</span><b>Seed</b><p>A reproducible random starting point.</p></div>
+          <i aria-hidden="true">→</i>
+          <div><span>02</span><b>Two generators</b><p>Our DCGAN and R3GAN each transform the numeric seed.</p></div>
+          <i aria-hidden="true">→</i>
+          <div><span>03</span><b>Synthetic faces</b><p>Images are labelled before preview or download.</p></div>
+        </div>
+        <div class="data-state overview-notice"><span class="safety-dot" aria-hidden="true"></span> All displayed faces are AI-generated and do not represent real people.</div>
+      </section>
+      <section class="view is-active" data-view="generate" aria-labelledby="workspaceTitle">
+        <div class="workspace">
+          <aside class="control-rail" aria-label="Generation parameters">
+            <div class="rail-heading">
+              <p class="eyebrow">Parameters</p>
+              <h1 id="workspaceTitle">Synthesize a collection</h1>
+              <p>Every result is new, synthetic, and reproducible from its seed.</p>
+            </div>
+
+            <fieldset class="parameter-group">
+              <legend>Face count</legend>
+              <p class="field-hint">Outputs in this generation</p>
+              <div class="count-options" role="group" aria-label="Face count">
+                <button class="count-button" data-count="1" aria-pressed="false" type="button">1</button>
+                <button class="count-button is-selected" data-count="4" aria-pressed="true" type="button">4</button>
+                <button class="count-button" data-count="8" aria-pressed="false" type="button">8</button>
+                <button class="count-button" data-count="16" aria-pressed="false" type="button">16</button>
+              </div>
+            </fieldset>
+
+            <div class="parameter-group">
+              <label for="seed">Seed <span>Reproducibility key</span></label>
+              <div class="input-with-action">
+                <input id="seed" name="seed" inputmode="numeric" autocomplete="off" value="884512399" aria-describedby="seedHelp">
+                <button class="icon-button" id="randomSeed" type="button" aria-label="Choose a random seed" title="Choose a random seed">↺</button>
+              </div>
+              <p class="field-hint" id="seedHelp">The same numeric seed is sent to both models.</p>
+              <p class="field-error" id="seedError" role="alert"></p>
+            </div>
+
+            <div class="parameter-group">
+              <label for="truncation">Latent range <output id="truncationValue" for="truncation">1.00</output></label>
+              <input id="truncation" type="range" min="0.25" max="2" step="0.05" value="1" aria-describedby="truncationHelp">
+              <div class="range-scale" aria-hidden="true"><span>Focused</span><span>Varied</span></div>
+              <p class="field-hint" id="truncationHelp">Applies to our DCGAN only; R3GAN uses native official sampling.</p>
+            </div>
+
+            <div class="parameter-group checkpoint-block">
+              <p class="eyebrow">Our checkpoint</p>
+              <p class="checkpoint-name" id="checkpointName">Awaiting checkpoint</p>
+              <dl class="mini-specs">
+                <div><dt>Architecture</dt><dd id="architecture">DCGAN</dd></div>
+                <div><dt>Resolution</dt><dd id="resolution">64 × 64</dd></div>
+                <div><dt>Latent space</dt><dd id="latentDim">128-D</dd></div>
+              </dl>
+            </div>
+
+            <button class="generate-button" id="generateButton" type="button" disabled>
+              <span aria-hidden="true">✦</span> Generate comparison
+            </button>
+            <p class="rail-note" id="railNote">Copy the exported Colab model files into <code>models/</code> to enable inference.</p>
+          </aside>
+
+          <section class="synthesis-canvas" aria-labelledby="canvasTitle">
+            <div class="canvas-heading">
+              <div>
+                <p class="eyebrow">Latent space</p>
+                <h2 id="canvasTitle">Same seed, two generators</h2>
+              </div>
+              <div class="canvas-actions">
+                <button class="secondary-button" id="copySeed" type="button" disabled>Copy seed</button>
+                <button class="secondary-button" id="downloadGrid" type="button" disabled>Download first grid</button>
+              </div>
+            </div>
+
+            <div class="canvas-shell" id="canvasShell" aria-live="polite">
+              <svg class="latent-traces" viewBox="0 0 900 560" preserveAspectRatio="none" aria-hidden="true">
+                <defs><filter id="soften"><feGaussianBlur stdDeviation="2"></feGaussianBlur></filter></defs>
+                <circle cx="66" cy="285" r="8"></circle>
+                <path d="M74 285 C190 285, 165 110, 332 110 S410 105, 500 105"/>
+                <path d="M74 285 C176 285, 184 235, 330 235 S412 235, 500 235"/>
+                <path d="M74 285 C180 285, 180 335, 330 335 S415 335, 500 335"/>
+                <path d="M74 285 C188 285, 165 460, 332 460 S410 460, 500 460"/>
+              </svg>
+              <div class="empty-generation" id="emptyGeneration">
+                <div class="empty-mark" aria-hidden="true">∿</div>
+                <h3>Model standing by</h3>
+                <p>Load our export and the official R3GAN assets to compare two synthetic collections.</p>
+              </div>
+              <div class="generation-grid" id="generationGrid" aria-label="Generated synthetic face collection"></div>
+            </div>
+            <div class="canvas-footer">
+              <p><span class="safety-dot" aria-hidden="true"></span> Generated faces are synthetic and do not represent real people.</p>
+            <p id="runInfo">Inference-only comparison workspace</p>
+            </div>
+          </section>
+
+          <aside class="model-rail" aria-labelledby="modelTitle">
+            <p class="eyebrow">Model</p>
+            <h2 id="modelTitle">Inference status</h2>
+            <div class="status-panel" id="modelPanel">
+              <p class="status-label"><span class="status-dot" aria-hidden="true"></span><span id="modelAvailability">Checking availability</span></p>
+              <p id="modelMessage">Looking for a local generator checkpoint.</p>
+            </div>
+            <div class="comparison-status" id="comparisonStatus" aria-live="polite">Checking comparison models.</div>
+            <div class="model-availability-list" id="modelAvailabilityList" aria-label="Comparison model availability"></div>
+            <dl class="model-specs">
+              <div><dt>Mode</dt><dd>Read-only inference</dd></div>
+              <div><dt>Comparison</dt><dd>DCGAN ↔ R3GAN</dd></div>
+              <div><dt>Dataset</dt><dd id="datasetName">FFHQ</dd></div>
+              <div><dt>Our checkpoint</dt><dd id="checkpointInfo">generator_best.pt</dd></div>
+              <div><dt>Device</dt><dd id="deviceInfo">Local CPU</dd></div>
+            </dl>
+            <div class="responsible-note">
+              <span aria-hidden="true">◇</span>
+              <p><b>Synthetic content notice</b>Do not present generated faces as real people or use them for impersonation.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view reading-view" data-view="training" aria-labelledby="trainingTitle">
+        <p class="eyebrow">Read-only training record</p>
+        <h1 id="trainingTitle">How the generator learned</h1>
+        <p class="lede">Training runs in Colab, not in this web app. Exported loss history and fixed-seed samples appear here after training.</p>
+        <div class="data-state" id="trainingState">Looking for <code>models/training_history.json</code>.</div>
+        <div class="history-grid" id="historyGrid"></div>
+      </section>
+
+      <section class="view reading-view" data-view="evaluation" aria-labelledby="evaluationTitle">
+        <p class="eyebrow">Read-only evaluation</p>
+        <h1 id="evaluationTitle">Sample quality evidence</h1>
+        <p class="lede">The Colab notebook exports diversity signals and optional FID results. Treat them as model diagnostics, not proof of real-world quality.</p>
+        <div class="data-state" id="evaluationState">Looking for <code>models/evaluation.json</code>.</div>
+      </section>
+
+      <section class="view reading-view" data-view="about" aria-labelledby="aboutTitle">
+        <p class="eyebrow">About the model</p>
+        <h1 id="aboutTitle">A transparent comparison, not a leaderboard</h1>
+        <div class="about-grid">
+          <article><h2>FFHQ preprocessing</h2><p>Aligned FFHQ images are center-cropped, resized to 64 × 64 pixels, and normalized to the generator output range of −1 to 1.</p></article>
+          <article><h2>Generator</h2><p>A 128-dimensional random latent vector passes through transposed-convolution blocks and produces an RGB synthetic face. The model is always loaded in evaluation mode here.</p></article>
+          <article><h2>Reference model</h2><p>R3GAN FFHQ-256 is an official pretrained generator loaded only when its local source and checkpoint are installed. The app uses its inference generator and never exposes R3GAN training or fine-tuning.</p></article>
+          <article><h2>Discriminator</h2><p>The discriminator is used only while training in Colab. It never runs in this local app and is not needed for generation.</p></article>
+          <article><h2>Known limits</h2><p>Our model is a 64px educational DCGAN; R3GAN is a pretrained 256px reference. A shared numeric seed is reproducible, but the models use different latent spaces and resolutions, so outputs are not image-paired or a fair equal-resolution benchmark.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><span>FaceForge AI</span><span>Inference-only GAN demonstration</span><span>All outputs are synthetic</span></footer>
+    <dialog id="previewDialog" aria-labelledby="previewTitle">
+      <form method="dialog"><button class="dialog-close" aria-label="Close image preview">×</button></form>
+      <img id="previewImage" alt="Expanded synthetic face generated by FaceForge AI">
+      <div class="preview-caption"><div><p class="eyebrow">Synthetic output</p><h2 id="previewTitle">Generated face</h2></div><button class="secondary-button" id="previewDownload" type="button">Download image</button></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

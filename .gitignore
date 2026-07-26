@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# Local data and generated artifacts — never publish dataset copies, trained
+# checkpoints, or downloaded third-party source from this repository.
+/data/
+/runs/
+/outputs/
+/tmp/
+/third_party/
+/models/*
+!/models/README.md
+
+# Design references retained locally; the shipped interface lives in app/static/.
+/sample.html
+/logo.png
+
+# Local Python/editor state.
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
