@@ -1,5 +1,12 @@
 # FaceForge AI
 
+<img width="1920" height="1080" alt="Screenshot 2026-07-26 164044" src="https://github.com/user-attachments/assets/2cd5a725-25a4-4241-b991-b0e9b45e3943" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-07-26 164118" src="https://github.com/user-attachments/assets/f279bdfb-9d68-4b0a-90a0-97f008b1dbbf" />
+
+<img width="1920" height="1080" alt="Screenshot 2026-07-26 164139" src="https://github.com/user-attachments/assets/d6eb91ca-7e06-4b88-918a-af85e97c9acb" />
+
+
 FaceForge AI is an educational GAN project for synthetic face-like image generation.
 It pairs reproducible FFHQ training workflows with a local, **inference-only** web application.
 
