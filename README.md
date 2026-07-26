@@ -113,16 +113,6 @@ The same numeric seed is supplied to both models, but this is a reproducible com
 
 > R3GAN checkpoints are Python pickles. Load only the official checkpoint obtained through the setup script; untrusted pickle files are unsafe.
 
-## Train in Google Colab
-
-Use the complete [training notebook](notebooks/faceforge_ffhq_training.ipynb).
-
-1. Open it in Google Colab and select a GPU runtime.
-2. Run the setup cell.
-3. Make aligned FFHQ images available at `MyDrive/FaceForge/ffhq/` under the data terms.
-4. Run the remaining cells in order to validate data, train, monitor `tqdm`, checkpoint, sample, and export.
-5. Review generated grids and metrics before exporting a candidate model.
-6. Download `faceforge_model_export.zip` and extract it into local `models/`.
 
 ## Train locally on D:
 
