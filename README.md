@@ -186,13 +186,6 @@ FaceForge DCGAN-64 is an instructional baseline. Results can be blurred, artifac
 
 R3GAN can create sharper images because it is stronger and pretrained at a higher resolution—not because the models are equivalent. Neither system is appropriate for identity-related or high-impact decisions.
 
-## Publishing
-
-Publish the **code** on GitHub and a reviewed **FaceForge DCGAN checkpoint** in a separate Hugging Face model repository. Git intentionally excludes FFHQ images, generated portraits, model weights, R3GAN assets, virtual environments, and caches.
-
-Before release, follow [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) and use [`docs/MODEL_CARD.md`](docs/MODEL_CARD.md) as the model repository README. It must contain exact measured results, data provenance, limitations, and terms consistent with FFHQ.
-
-See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for release boundaries and [`SECURITY.md`](SECURITY.md) for responsible disclosure guidance.
 
 ## License
 
